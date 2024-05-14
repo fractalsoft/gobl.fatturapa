@@ -35,3 +35,10 @@ func inputFilename(args []string) string {
 	}
 	return ""
 }
+
+func inputEnvironment(args []string) string {
+	if len(args) > 1 && args[1] != "-" {
+		return args[1]
+	}
+	return ""
+}
