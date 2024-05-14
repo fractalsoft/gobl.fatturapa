@@ -3,11 +3,13 @@ module github.com/invopop/gobl.fatturapa
 go 1.20
 
 require (
+	github.com/globusdigital/soap v1.4.0
 	github.com/invopop/gobl v0.76.0
 	github.com/invopop/xmldsig v0.8.0
 	github.com/magefile/mage v1.14.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
+	github.com/tiaguinho/gosoap v1.4.4
 	gitlab.com/flimzy/testy v0.12.4
 )
 
@@ -32,7 +34,9 @@ require (
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	golang.org/x/crypto v0.17.0 // indirect
+	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	software.sslmate.com/src/go-pkcs12 v0.2.0 // indirect
 )
