@@ -12,15 +12,19 @@ import (
 
 func TestHTTPClient(t *testing.T) {
 	t.Run("should return HTTP Client object", func(t *testing.T) {
-		httpClient := sdi.HTTPClient(nil)
+		httpClient := sdi.NewHTTPClient().Build()
 
 		assert.IsType(t, &http.Client{}, httpClient)
 	})
 	t.Run("should set cert pool in HTTP Client object", func(t *testing.T) {
 		caCertPool := x509.NewCertPool()
-		httpClient := sdi.HTTPClient(caCertPool)
+		httpClient := sdi.NewHTTPClient(
+			sdi.WithCaCertPool(caCertPool),
+			sdi.WithDebugClient(),
+		).Build()
 
-		transport := httpClient.Transport.(*http.Transport)
+		loggingTransport := httpClient.Transport.(*sdi.LoggingTransport)
+		transport := loggingTransport.HTTPTransport
 		assert.IsType(t, caCertPool, transport.TLSClientConfig.RootCAs)
 	})
 }
