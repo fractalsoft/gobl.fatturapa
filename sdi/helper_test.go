@@ -12,6 +12,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func handlerFunc(env *sdi.SDIEnvelope) {
+	if env.Body.FileSubmissionMetadata != nil {
+		log.Printf("parsing MetadatiInvioFile:\n")
+	}
+	if env.Body.NonDeliveryNotificationMessage != nil {
+		log.Printf("parsing NotificaMancataConsegna:\n")
+	}
+	if env.Body.InvoiceTransmissionCertificate != nil {
+		log.Printf("parsing AttestazioneTrasmissioneFattura:\n")
+	}
+}
+
 func TestParseMessage(t *testing.T) {
 	t.Run("parse MetadatiInvioFile", func(t *testing.T) {
 		var buf bytes.Buffer
@@ -36,7 +48,7 @@ func TestParseMessage(t *testing.T) {
 			`</soapenv:Envelope>`
 		reader := strings.NewReader(message)
 
-		sdi.ParseMessage(io.NopCloser(reader))
+		sdi.ParseMessage(io.NopCloser(reader), handlerFunc)
 
 		assert.Contains(t, buf.String(), "parsing MetadatiInvioFile")
 	})
@@ -64,7 +76,7 @@ func TestParseMessage(t *testing.T) {
 			`</soapenv:Envelope>`
 		reader := strings.NewReader(message)
 
-		sdi.ParseMessage(io.NopCloser(reader))
+		sdi.ParseMessage(io.NopCloser(reader), handlerFunc)
 
 		assert.Contains(t, buf.String(), "parsing NotificaMancataConsegna")
 	})
@@ -96,7 +108,7 @@ func TestParseMessage(t *testing.T) {
 			`</soapenv:Envelope>`
 		reader := strings.NewReader(message)
 
-		sdi.ParseMessage(io.NopCloser(reader))
+		sdi.ParseMessage(io.NopCloser(reader), handlerFunc)
 
 		assert.Contains(t, buf.String(), "parsing AttestazioneTrasmissioneFattura")
 	})

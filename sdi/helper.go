@@ -5,13 +5,15 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
 	"mime"
 	"mime/multipart"
 	"strings"
 
 	resty "github.com/go-resty/resty/v2"
 )
+
+// HandleSOAPRequest
+type HandleSOAPRequest func(*SDIEnvelope)
 
 // SDIEnvelope defines messages received by
 type SDIEnvelope struct {
@@ -61,7 +63,7 @@ func parseMultipartResponse(resp *resty.Response, response interface{}) error {
 	return nil
 }
 
-func ParseMessage(body io.ReadCloser) error {
+func ParseMessage(body io.ReadCloser, handler HandleSOAPRequest) error {
 	data, err := io.ReadAll(body)
 	if err != nil {
 		return err
@@ -71,15 +73,7 @@ func ParseMessage(body io.ReadCloser) error {
 	if err != nil {
 		return err
 	}
-	if env.Body.FileSubmissionMetadata != nil {
-		log.Printf("parsing MetadatiInvioFile:\n")
-	}
-	if env.Body.NonDeliveryNotificationMessage != nil {
-		log.Printf("parsing NotificaMancataConsegna:\n")
-	}
-	if env.Body.InvoiceTransmissionCertificate != nil {
-		log.Printf("parsing AttestazioneTrasmissioneFattura:\n")
-	}
+	handler(env)
 
 	return nil
 }
