@@ -4,12 +4,24 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"io"
+	"log"
 	"mime"
 	"mime/multipart"
 	"strings"
 
 	resty "github.com/go-resty/resty/v2"
 )
+
+// SDIEnvelope defines messages received by
+type SDIEnvelope struct {
+	XMLName xml.Name `xml:"Envelope"`
+	Body    struct {
+		FileSubmissionMetadata         *FileSubmissionMetadata         `xml:"MetadatiInvioFile,omitempty"`
+		NonDeliveryNotificationMessage *NonDeliveryNotificationMessage `xml:"NotificaMancataConsegna,omitempty"`
+		InvoiceTransmissionCertificate *InvoiceTransmissionCertificate `xml:"AttestazioneTrasmissioneFattura,omitempty"`
+	} `xml:"Body"`
+}
 
 // parseMultipartResponse parses a multipart HTTP response and deserializes the content into the provided structure
 func parseMultipartResponse(resp *resty.Response, response interface{}) error {
@@ -46,5 +58,28 @@ func parseMultipartResponse(resp *resty.Response, response interface{}) error {
 			return fmt.Errorf("parsing xml error: %s", err)
 		}
 	}
+	return nil
+}
+
+func ParseMessage(body io.ReadCloser) error {
+	data, err := io.ReadAll(body)
+	if err != nil {
+		return err
+	}
+	env := new(SDIEnvelope)
+	err = xml.Unmarshal(data, env)
+	if err != nil {
+		return err
+	}
+	if env.Body.FileSubmissionMetadata != nil {
+		log.Printf("parsing MetadatiInvioFile:\n")
+	}
+	if env.Body.NonDeliveryNotificationMessage != nil {
+		log.Printf("parsing NotificaMancataConsegna:\n")
+	}
+	if env.Body.InvoiceTransmissionCertificate != nil {
+		log.Printf("parsing AttestazioneTrasmissioneFattura:\n")
+	}
+
 	return nil
 }

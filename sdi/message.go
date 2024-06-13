@@ -18,6 +18,13 @@ func MessageHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	log.Printf("Incoming request:\n%s", requestDump)
 
+	err = ParseMessage(req.Body)
+	if err != nil {
+		log.Printf("Failed to parse body: %s\n", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	responseBody := []byte(soapEmptyResponse())
 	response := &http.Response{
 		Status:        "200 OK",
